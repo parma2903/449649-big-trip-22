@@ -1,24 +1,34 @@
-import SortView from '../view/sort-view.js';
-import EditList from '../view/event-list-view.js';
-import FormEditView from '../view/form-edit-view.js';
-import PointView from '../view/point-view.js';
+import EventListView from '../view/events-list-view.js';
+import EventItemView from '../view/event-item-view.js';
+import PointEditorView from '../view/point-editor-view.js';
+import SortingView from '../view/sorting-view.js';
 import {render} from '../render.js';
 
 export default class BoardPresenter {
-  sortComponent = new SortView();
-  editListComponent = new EditList();
+  sortingComponent = new SortingView();
+  listComponent = new EventListView();
 
-  constructor({ container }) {
-    this.container = container;
+  constructor({ tripEventsContainer, pointsModel, offersModel, destinationsModel }) {
+    this.tripEventsContainer = tripEventsContainer;
+    this.pointsModel = pointsModel;
+    this.offersModel = offersModel;
+    this.destinationsModel = destinationsModel;
   }
 
   init() {
-    render(this.sortComponent, this.container);
-    render(this.editListComponent, this.container);
-    render(new FormEditView(), this.editListComponent.getElement());
+    this.eventPoints = [...this.pointsModel.getEventPoints()];
+    render(this.sortingComponent, this.tripEventsContainer);
+    render(this.listComponent, this.tripEventsContainer);
+    render(new PointEditorView(), this.listComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
-      render(new PointView(), this.editListComponent.getElement());
+    for (let i = 0; i < this.eventPoints.length; i++) {
+      const offers = this.offersModel.getByType(this.eventPoints[i].type);
+      const destination = this.destinationsModel.getById(this.eventPoints[i].destination);
+      render(new EventItemView({
+        eventPoint: this.eventPoints[i],
+        offers,
+        destination
+      }), this.listComponent.getElement());
     }
   }
 }

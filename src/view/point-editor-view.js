@@ -1,6 +1,6 @@
 import {createElement} from '../render.js';
 
-function createFormEditTemplate() {
+function createPointEditorTemplate() {
   return `
   <form class="event event--edit" action="#" method="post">
     <header class="event__header">
@@ -160,7 +160,7 @@ function createFormEditTemplate() {
 
 export default class FormEditView {
   getTemplate() {
-    return createFormEditTemplate();
+    return createPointEditorTemplate();
   }
 
   getElement() {
