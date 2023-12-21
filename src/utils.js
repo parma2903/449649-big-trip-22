@@ -1,42 +1,51 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
-import { MSEC_IN_HOUR, MSEC_IN_DAY, DURATION_FORMATS } from './const.js';
 
-const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.length)];
-const getRandomPositiveNumber = (max) => Math.ceil(Math.random() * max);
-const humanizeDate = (currentDate, format) => currentDate ? dayjs(currentDate).format(format) : '';
-const calculateDuration = (dateFrom, dateTo) => {
+const MSEC_IN_SEC = 1000;
+const SEC_IN_MIN = 60;
+const MIN_IN_HOUR = 60;
+const HOUR_IN_DAY = 24;
+
+const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
+const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_DAY;
+
+const getRandomPositiveNumber = (min = 0, max = 1) => {
+  const lower = Math.ceil(Math.min(min, max));
+  const upper = Math.floor(Math.max(min, max));
+  return Math.floor(lower + Math.random() * (upper - lower + 1));
+};
+
+const getRandomArrayElement = (items) => items[getRandomPositiveNumber(0, items.length - 1)];
+
+const formatStringToDate = (date) => dayjs(date).format('YYYY-MM-DDTHH:mm');
+const formatStringToShortDate = (date) => dayjs(date).format('MMM DD');
+const formatStringToTime = (date) => dayjs(date).format('HH:mm');
+
+const calcDuration = (dateFrom, dateTo) => {
   const diff = dayjs(dateTo).diff(dayjs(dateFrom));
 
-  let pointDuration;
-
-  switch (true) {
-    case (diff >= MSEC_IN_DAY):
-      pointDuration = dayjs.duration(diff).format(DURATION_FORMATS.days);
-      break;
-    case (diff >= MSEC_IN_HOUR):
-      pointDuration = dayjs.duration(diff).format(DURATION_FORMATS.hours);
-      break;
-    case (diff < MSEC_IN_HOUR):
-      pointDuration = dayjs.duration(diff).format(DURATION_FORMATS.mins);
-      break;
+  if (diff >= MSEC_IN_DAY) {
+    return dayjs.duration(diff).format('DD[D] HH[H] mm[M]');
   }
-
-  return pointDuration;
+  if (diff >= MSEC_IN_HOUR) {
+    return dayjs.duration(diff).format('HH[H] mm[M]');
+  }
+  if (diff < MSEC_IN_HOUR) {
+    return dayjs.duration(diff).format('mm[M]');
+  }
 };
 
-const incrementCounter = (START_FROM) => {
-  let counterStart = START_FROM;
-  return function() {
-    return counterStart++;
-  };
-};
+const toCapitalize = (str) => `${str[0].toUpperCase()}${str.slice(1)}`;
 
 export {
+  MSEC_IN_HOUR,
+  MSEC_IN_DAY,
   getRandomArrayElement,
   getRandomPositiveNumber,
-  humanizeDate,
-  calculateDuration,
-  incrementCounter
+  formatStringToDate,
+  formatStringToShortDate,
+  formatStringToTime,
+  toCapitalize,
+  calcDuration
 };

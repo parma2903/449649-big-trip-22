@@ -1,8 +1,7 @@
-import { getOffers } from '../mock/offers.js';
-
 export default class OffersModel {
-  constructor() {
-    this.offers = getOffers();
+  constructor(service) {
+    this.service = service;
+    this.offers = this.service.getOffers();
   }
 
   get() {
@@ -10,6 +9,7 @@ export default class OffersModel {
   }
 
   getByType(type) {
-    return this.offers.find((offers) => offers.type === type.toLowerCase()).offers;
+    return this.offers
+      .find((offer) => offer.type === type).offers;
   }
 }

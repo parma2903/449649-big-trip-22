@@ -1,41 +1,30 @@
-const POINTS_COUNT = 5;
-const MSEC_IN_SEC = 1000;
-const SEC_IN_MIN = 60;
-const MIN_IN_HOUR = 60;
-const HOUR_IN_DAY = 24;
-const MAX_PRICE_VALUE = 200;
-const EVENT_TYPES = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const CITIES = ['Paris', 'London', 'Chicago', 'Tokio', 'New York', 'Moscow', 'Amsterdam', 'San-Francisco'];
-const DESCCRIPTIONS = [
-  'Incidunt architecto labore atque!',
-  'Voluptatem exercitationem culpa, molestias qui eveniet corrupti?',
-  'Eius, dolorem.',
-  'Odit ad eaque cupiditate praesentium maxime.',
-];
+const DESCRIPTION = 'This is a beautiful place to visit';
 
-const DATE_FORMATS = {
-  time: 'HH:mm',
-  shortDate: 'MMM DD',
-  formDateTime: 'DD/MM/YY HH:mm'
+const Counts = {
+  DESTINATIONS: 10,
+  DESCRIPTION_PHOTO: 4,
+  OFFERS: 7,
+  POINTS: 5,
 };
 
-const DURATION_FORMATS = {
-  days: 'DD[D] HH[H] mm[M]',
-  hours: 'HH[H] mm[M]',
-  mins: 'mm[M]'
+const Price = {
+  MIN: 1,
+  MAX: 500
 };
 
-const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
-const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_DAY;
+const Duration = {
+  HOUR: 5,
+  DAY: 3,
+  MINUTE: 59
+};
 
 export {
-  POINTS_COUNT,
   EVENT_TYPES,
-  MAX_PRICE_VALUE,
   CITIES,
-  DESCCRIPTIONS,
-  DATE_FORMATS,
-  MSEC_IN_HOUR,
-  MSEC_IN_DAY,
-  DURATION_FORMATS
+  DESCRIPTION,
+  Counts,
+  Price,
+  Duration
 };

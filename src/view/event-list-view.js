@@ -4,7 +4,7 @@ function createEventListTemplate() {
   return '<ul class="trip-events__list"></ul>';
 }
 
-export default class EventListView {
+export default class FilterView {
   getTemplate() {
     return createEventListTemplate();
   }

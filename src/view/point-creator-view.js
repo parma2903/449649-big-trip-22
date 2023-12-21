@@ -182,3 +182,4 @@ export default class AddPointView {
     this.element = null;
   }
 }
+
