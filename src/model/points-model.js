@@ -1,8 +1,10 @@
+import { generatePoint } from '../mock/points.js';
+import { getRandomPositiveNumber } from '../utils.js';
+
+const POINTS_COUNT = getRandomPositiveNumber(0, 5);
+
 export default class PointsModel {
-  constructor(service) {
-    this.service = service;
-    this.points = this.service.getPoints();
-  }
+  points = Array.from({ length: POINTS_COUNT }, generatePoint);
 
   getPoints() {
     return this.points;

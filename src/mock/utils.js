@@ -1,16 +1,10 @@
 import dayjs from 'dayjs';
-import {
-  Duration
-} from '../const.js';
-import {
-  getRandomPositiveNumber
-} from '../utils.js';
+import { Duration } from '../const.js';
+import { getRandomPositiveNumber } from '../utils.js';
 
 let randomDate = dayjs().subtract(getRandomPositiveNumber(0, Duration.DAY), 'day').toDate();
 
-const getDate = ({
-  next
-}) => {
+const getDate = ({ next }) => {
   const daysInterval = getRandomPositiveNumber(0, Duration.DAY);
   const hoursInterval = getRandomPositiveNumber(1, Duration.HOUR);
   const minsInterval = getRandomPositiveNumber(0, Duration.MINUTE);
@@ -25,6 +19,4 @@ const getDate = ({
   return randomDate;
 };
 
-export {
-  getDate
-};
+export { getDate };

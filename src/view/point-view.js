@@ -1,107 +1,73 @@
 import { createElement } from '../render.js';
-import { formatStringToDate, formatStringToShortDate, formatStringToTime, toCapitalize, calcDuration } from '../utils.js';
+import { formatDate, formatTime, getTimeDiff } from '../utils.js';
+import dayjs from 'dayjs';
 
-const getCheckedOffers = (allOffers, pointOffersIDs) => {
-  const checkedOffers = [];
-  allOffers.forEach(({
-    id,
-    title,
-    price
-  }) => {
-    if (pointOffersIDs.find((pointOffersID) => pointOffersID === id)) {
-      checkedOffers.push({
-        price,
-        title
-      });
-    }
-  });
-  return checkedOffers;
-};
+const createOffer = (point = {}) => {
+  const offers = point.offers;
 
-const createOffersTemplate = (offers) => {
-  const items = offers.reduce((markup, {title, price}) => `${markup}
-     <li class="event__offer">
-      <span class="event__offer-title">${title}</span>
+  return offers.map((offer) =>
+    `<li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${price}</span>
-    </li>`, '');
-
-  if (offers.length > 0) {
-    return `
-    <h4 class="visually-hidden">Offers:</h4>
-    <ul class="event__selected-offers">
-      ${items}
-    </ul>
-    `;
-  }
-  return '';
+      <span class="event__offer-price">${offer.price}</span>
+    </li>`).join('');
 };
 
-const createSheduleTemplate = (dateFrom, dateTo) =>
-  `<div class="event__schedule">
-  <p class="event__time">
-    <time class="event__start-time" datetime="${formatStringToDate(dateFrom)}">${formatStringToTime(dateFrom)}</time>
-    &mdash;
-    <time class="event__end-time" datetime="${formatStringToDate(dateTo)}">${formatStringToTime(dateTo)}</time>
-  </p>
-  <p class="event__duration">${calcDuration(dateFrom, dateTo)}</p>
-</div>`;
+const createFavoriteIcon = (isFavorite = false) => (
+  `<button class="event__favorite-btn ${isFavorite === true ? 'event__favorite-btn--active' : ''}" type="button">
+    <span class="visually-hidden">Add to favorite</span>
+    <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+      <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+    </svg>
+  </button>`
+);
 
+const createPointViewTemplate = (point) => {
+  const { dateFrom, dateTo, destination } = point;
+  const month = formatDate(dateFrom, 'MMM DD');
+  const startTime = formatTime(dateFrom);
+  const endTime = formatTime(dateTo);
+  const diff = getTimeDiff(dateFrom, dateTo);
 
-const createPointTemplate = ({
-  point,
-  pointDestination,
-  pointOffers
-}) => {
-  const {
-    basePrice,
-    dateFrom,
-    dateTo,
-    type,
-    isFavorite
-  } = point;
-  return `<li class="trip-events__item">
+  return (
+    `<li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${formatStringToDate(dateFrom)}">${formatStringToShortDate(dateFrom)}</time>
+        <time class="event__date" datetime="${dayjs(dateFrom).format('YYYY-MM-DD')}">${month}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${toCapitalize(type)} ${pointDestination.name}</h3>
-        ${createSheduleTemplate(dateFrom, dateTo)}
+        <h3 class="event__title">${point.type} ${destination.name}</h3>
+        <div class="event__schedule">
+          <p class="event__time">
+            <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${startTime}</time>
+            &mdash;
+            <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${endTime}</time>
+          </p>
+          <p class="event__duration">${diff}M</p>
+        </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${point.basePrice}</span>
         </p>
-        ${createOffersTemplate(getCheckedOffers(pointOffers, point.offers))}
-        <button class="event__favorite-btn ${isFavorite ? ' event__favorite-btn--active' : ''}" type="button">
-          <span class="visually-hidden">Add to favorite</span>
-          <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-          </svg>
-        </button>
+        <h4 class="visually-hidden">Offers:</h4>
+        <ul class="event__selected-offers">
+          ${createOffer(point)}
+        </ul>
+        ${createFavoriteIcon(point.isFavorite)}
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>`;
+    </li>`
+  );
 };
 
 export default class PointView {
-  constructor({
-    point,
-    pointDestination,
-    pointOffers
-  }) {
+  constructor({ point }) {
     this.point = point;
-    this.pointDestination = pointDestination;
-    this.pointOffers = pointOffers;
   }
 
   getTemplate() {
-    return createPointTemplate({
-      point: this.point,
-      pointDestination: this.pointDestination,
-      pointOffers: this.pointOffers
-    });
+    return createPointViewTemplate(this.point);
   }
 
   getElement() {

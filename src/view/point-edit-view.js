@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import { createElement } from '../render.js';
 
 function createPointEditorTemplate() {
   return `
@@ -158,7 +158,7 @@ function createPointEditorTemplate() {
   `;
 }
 
-export default class FormEditView {
+export default class PointEditView {
   getTemplate() {
     return createPointEditorTemplate();
   }

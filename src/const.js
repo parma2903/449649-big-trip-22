@@ -1,6 +1,26 @@
 const EVENT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const CITIES = ['Paris', 'London', 'Chicago', 'Tokio', 'New York', 'Moscow', 'Amsterdam', 'San-Francisco'];
-const DESCRIPTION = 'This is a beautiful place to visit';
+const CITY_DESCRIPTION = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  'Cras aliquet varius magna, non porta ligula feugiat eget.',
+  'Fusce tristique felis at fermentum pharetra.',
+  'Aliquam id orci ut lectus varius viverra.',
+  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
+  'Sed sed nisi sed augue convallis suscipit in sed felis.',
+  'Aliquam erat volutpat.',
+  'Nunc fermentum tortor ac porta dapibus.',
+  'In rutrum ac purus sit amet tempus.',
+];
+
+const PICTURE_DESCRIPTION = [
+  'Nestled between rolling hills and a bustling waterfront',
+  'Known for its cutting-edge technology hubs, sleek design',
+  'A city of contrasts, where tradition meets modernity',
+  'With its colorful markets, lively street performers, and a rich tapestry of diverse neighborhoods',
+  'Surrounded by lush greenery and framed by majestic mountains'
+];
 
 const Counts = {
   DESTINATIONS: 10,
@@ -20,11 +40,21 @@ const Duration = {
   MINUTE: 59
 };
 
+const OFFER_TYPES = [
+  'Add luggage',
+  'Switch to comfort class',
+  'Add meal',
+  'Choose seats',
+  'Travel by train'
+];
+
 export {
   EVENT_TYPES,
   CITIES,
-  DESCRIPTION,
+  CITY_DESCRIPTION,
+  PICTURE_DESCRIPTION,
   Counts,
   Price,
-  Duration
+  Duration,
+  OFFER_TYPES
 };
