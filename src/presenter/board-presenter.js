@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import EventListEmptyView from '../view/event-list-empty-view.js';
 import EventListView from '../view/event-list-view.js';
@@ -24,10 +24,10 @@ export default class BoardPresenter {
       render(new SortingView(), this.tripContainer);
       render(this.tripViewComponent, this.tripContainer);
       render(this.pointListViewComponent, this.tripContainer);
-      render(new PointEditView({ point: this.pointsModel[0] }), this.pointListViewComponent.getElement());
+      render(new PointEditView({ point: this.pointsModel[0] }), this.pointListViewComponent.element);
 
       for (let i = 0; i < this.pointsModel.length; i++) {
-        render(new PointView({ point: this.pointsModel[i] }), this.pointListViewComponent.getElement());
+        render(new PointView({ point: this.pointsModel[i] }), this.pointListViewComponent.element);
       }
     }
   }
