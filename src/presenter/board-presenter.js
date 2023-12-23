@@ -7,27 +7,32 @@ import SortingView from '../view/sorting-view.js';
 import TripView from '../view/trip-view.js';
 
 export default class BoardPresenter {
-  tripViewComponent = new TripView();
-  pointListViewComponent = new EventListView();
+  #tripContainer = null;
+  #pointsModel = null;
+
+  #tripViewComponent = new TripView();
+  #pointListViewComponent = new EventListView();
+
+  #boardPoints = [];
 
   constructor({ tripContainer, pointsModel }) {
-    this.tripContainer = tripContainer;
-    this.pointsModel = pointsModel;
+    this.#tripContainer = tripContainer;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
-    this.pointsModel = [...this.pointsModel.getPoints()];
+    this.#boardPoints = [...this.#pointsModel.points];
 
-    if (this.pointsModel.length === 0) {
-      render(new EventListEmptyView(), this.tripContainer);
+    if (this.#boardPoints.length === 0) {
+      render(new EventListEmptyView(), this.#tripContainer);
     } else {
-      render(new SortingView(), this.tripContainer);
-      render(this.tripViewComponent, this.tripContainer);
-      render(this.pointListViewComponent, this.tripContainer);
-      render(new PointEditView({ point: this.pointsModel[0] }), this.pointListViewComponent.element);
+      render(new SortingView(), this.#tripContainer);
+      render(this.#tripViewComponent, this.#tripContainer);
+      render(this.#pointListViewComponent, this.#tripContainer);
+      render(new PointEditView({ point: this.#boardPoints[0] }), this.#pointListViewComponent.element);
 
-      for (let i = 0; i < this.pointsModel.length; i++) {
-        render(new PointView({ point: this.pointsModel[i] }), this.pointListViewComponent.element);
+      for (let i = 0; i < this.#boardPoints.length; i++) {
+        render(new PointView({ point: this.#boardPoints[i] }), this.#pointListViewComponent.element);
       }
     }
   }
