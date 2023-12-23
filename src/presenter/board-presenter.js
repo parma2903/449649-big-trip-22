@@ -23,17 +23,7 @@ export default class BoardPresenter {
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
 
-    if (this.#boardPoints.length === 0) {
-      render(new EventListEmptyView(), this.#tripContainer);
-    } else {
-      render(new SortingView(), this.#tripContainer);
-      render(this.#tripViewComponent, this.#tripContainer);
-      render(this.#pointListViewComponent, this.#tripContainer);
-
-      for (let i = 0; i < this.#boardPoints.length; i++) {
-        this.#renderPoint(this.#boardPoints[i]);
-      }
-    }
+    this.#renderBoard();
   }
 
   #renderPoint(point) {
@@ -68,5 +58,19 @@ export default class BoardPresenter {
     }
 
     render(pointComponent, this.#pointListViewComponent.element);
+  }
+
+  #renderBoard() {
+    if (this.#boardPoints.length === 0) {
+      render(new EventListEmptyView(), this.#tripContainer);
+    } else {
+      render(new SortingView(), this.#tripContainer);
+      render(this.#tripViewComponent, this.#tripContainer);
+      render(this.#pointListViewComponent, this.#tripContainer);
+
+      for (let i = 0; i < this.#boardPoints.length; i++) {
+        this.#renderPoint(this.#boardPoints[i]);
+      }
+    }
   }
 }
