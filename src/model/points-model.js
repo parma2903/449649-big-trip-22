@@ -1,5 +1,5 @@
 import { generatePoint } from '../mock/points.js';
-import { getRandomPositiveNumber } from '../utils.js';
+import { getRandomPositiveNumber } from '../utils/utils.js';
 
 const POINTS_COUNT = getRandomPositiveNumber(0, 5);
 

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { formatDate, formatTime, getTimeDiff } from '../utils.js';
+import { formatDate, formatTime, getTimeDiff } from '../utils/utils.js';
 import dayjs from 'dayjs';
 
 const createOffer = (point = {}) => {

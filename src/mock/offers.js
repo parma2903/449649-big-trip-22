@@ -1,5 +1,5 @@
 import { Price, OFFER_TYPES } from '../const.js';
-import { getRandomPositiveNumber } from '../utils.js';
+import { getRandomPositiveNumber } from '../utils/utils.js';
 
 const generateOffer = () => {
   return {

@@ -1,5 +1,5 @@
 import { CITY_DESCRIPTION, CITIES, PICTURE_DESCRIPTION } from '../const.js';
-import { getRandomPositiveNumber } from '../utils.js';
+import { getRandomPositiveNumber } from '../utils/utils.js';
 
 const generatePicture = () => ({
   src: `https://loremflickr.com/248/152?random=${getRandomPositiveNumber(1, 10)}`,

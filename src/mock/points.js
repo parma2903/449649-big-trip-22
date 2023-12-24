@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { getRandomPositiveNumber } from '../utils.js';
+import { getRandomPositiveNumber } from '../utils/utils.js';
 import { generateOffers } from './offers.js';
 import { generateDestinations } from './destinations.js';
 
