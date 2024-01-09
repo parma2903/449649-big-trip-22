@@ -48,6 +48,13 @@ const OFFER_TYPES = [
   'Travel by train'
 ];
 
+const FilterType = {
+  EVERYTHING: 'all',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past'
+};
+
 export {
   EVENT_TYPES,
   CITIES,
@@ -56,5 +63,6 @@ export {
   Counts,
   Price,
   Duration,
-  OFFER_TYPES
+  OFFER_TYPES,
+  FilterType
 };
