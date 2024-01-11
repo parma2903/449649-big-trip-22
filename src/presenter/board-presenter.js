@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, replace, RenderPosition } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import EventListEmptyView from '../view/event-list-empty-view.js';
 import EventListView from '../view/event-list-view.js';
@@ -12,6 +12,8 @@ export default class BoardPresenter {
 
   #tripViewComponent = new TripView();
   #pointListViewComponent = new EventListView();
+  #sortComponent = new SortingView();
+  #noPointsComponent = new EventListEmptyView();
 
   #boardPoints = [];
 
@@ -60,17 +62,36 @@ export default class BoardPresenter {
     render(pointComponent, this.#pointListViewComponent.element);
   }
 
+  #renderPoints() {
+    for (let i = 0; i < this.#boardPoints.length; i++) {
+      this.#renderPoint(this.#boardPoints[i]);
+    }
+  }
+
+  #renderPointsList() {
+    render(this.#pointListViewComponent, this.#tripContainer);
+    this.#renderPoints();
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderTripView() {
+    render(this.#tripViewComponent, this.#tripContainer);
+  }
+
+  #renderNoPointsView() {
+    render(this.#noPointsComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
+  }
+
   #renderBoard() {
     if (this.#boardPoints.length === 0) {
-      render(new EventListEmptyView(), this.#tripContainer);
+      this.#renderNoPointsView();
     } else {
-      render(new SortingView(), this.#tripContainer);
-      render(this.#tripViewComponent, this.#tripContainer);
-      render(this.#pointListViewComponent, this.#tripContainer);
-
-      for (let i = 0; i < this.#boardPoints.length; i++) {
-        this.#renderPoint(this.#boardPoints[i]);
-      }
+      this.#renderTripView();
+      this.#renderSort();
+      this.#renderPointsList();
     }
   }
 }
