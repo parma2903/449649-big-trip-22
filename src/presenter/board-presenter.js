@@ -1,10 +1,9 @@
-import { render, replace, RenderPosition } from '../framework/render.js';
-import PointView from '../view/point-view.js';
+import { render, RenderPosition } from '../framework/render.js';
 import EventListEmptyView from '../view/event-list-empty-view.js';
 import EventListView from '../view/event-list-view.js';
-import PointEditView from '../view/point-edit-view.js';
 import SortingView from '../view/sorting-view.js';
 import TripView from '../view/trip-view.js';
+import PointPresenter from './point-presenter.js';
 
 export default class BoardPresenter {
   #tripContainer = null;
@@ -24,42 +23,14 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
-
     this.#renderBoard();
   }
 
   #renderPoint(point) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replacePointToView();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const pointComponent = new PointView({
-      point,
-      onEditClick: () => {
-        replacePointToEdit();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#tripViewComponent,
     });
-    const pointEditComponent = new PointEditView({
-      point,
-      onCloseClick: () => {
-        replacePointToView();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replacePointToEdit() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replacePointToView() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#pointListViewComponent.element);
+    pointPresenter.init(point);
   }
 
   #renderPoints() {
