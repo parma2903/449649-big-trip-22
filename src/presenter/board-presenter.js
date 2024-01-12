@@ -4,6 +4,7 @@ import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import TripView from '../view/trip-view.js';
 import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/utils.js';
 
 export default class BoardPresenter {
   #tripContainer = null;
@@ -26,6 +27,11 @@ export default class BoardPresenter {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#renderBoard();
   }
+
+  #handlePointChange = (updatedPoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
 
   #renderPoint(point) {
     const pointPresenter = new PointPresenter({
