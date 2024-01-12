@@ -2,14 +2,24 @@ import {render, replace, remove } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
 export default class PointPresenter {
   #pointListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
   #point = null;
+  #handleDataChange = null;
+  #handleModeChange = null;
+  #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer}) {
+  constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
+    this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point) {
@@ -39,8 +49,12 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#pointListContainer.contains(prevPointEditComponent.element)) {
-      replace(this.#pointComponent, prevPointEditComponent);
+    if (this.#mode === Mode.DEFAULT) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#mode === Mode.EDITING) {
+      replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
     remove(prevPointComponent);
@@ -50,6 +64,12 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replacePointToView();
+    }
   }
 
   #escKeyDownHandler = (evt) => {
@@ -62,9 +82,29 @@ export default class PointPresenter {
 
   #replacePointToEdit() {
     replace(this.#pointEditComponent, this.#pointComponent);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replacePointToView() {
     replace(this.#pointComponent, this.#pointEditComponent);
+    this.#mode = Mode.DEFAULT;
   }
+
+  #handleEditClick = () => {
+    this.#replacePointToEdit();
+  };
+
+  #handleSaveClick = (point) => {
+    this.#handleDataChange(point);
+    this.#replacePointToView();
+  };
+
+  #handleDeleteClick = () => {
+    this.#replacePointToView();
+  };
+
+  #handleFavouriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavourite: !this.#point.isFavourite});
+  };
 }
