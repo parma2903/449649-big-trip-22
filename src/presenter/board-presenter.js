@@ -12,7 +12,7 @@ export default class BoardPresenter {
 
   #tripViewComponent = new TripView();
   #pointListViewComponent = new EventListView();
-  #sortComponent = new SortingView();
+  #sortComponent = null;
   #noPointsComponent = new EventListEmptyView();
 
   #boardPoints = [];
@@ -27,6 +27,10 @@ export default class BoardPresenter {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#renderBoard();
   }
+
+  #handleSortTypeChange = (sortType) => {
+
+  };
 
   #handleModeChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
@@ -59,6 +63,9 @@ export default class BoardPresenter {
   }
 
   #renderSort() {
+    this.#sortComponent = new SortingView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
     render(this.#sortComponent, this.#tripContainer, RenderPosition.AFTERBEGIN);
   }
 
