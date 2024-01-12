@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 
@@ -14,6 +14,9 @@ export default class PointPresenter {
 
   init(point) {
     this.#point = point;
+
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView({
       point,
@@ -31,7 +34,22 @@ export default class PointPresenter {
       }
     });
 
-    render(this.#pointComponent, this.#pointListContainer.element);
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this.#pointComponent, this.#pointListContainer.element);
+      return;
+    }
+
+    if (this.#pointListContainer.contains(prevPointEditComponent.element)) {
+      replace(this.#pointComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   }
 
   #escKeyDownHandler = (evt) => {
@@ -40,7 +58,7 @@ export default class PointPresenter {
       this.#replacePointToView();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }
-  }
+  };
 
   #replacePointToEdit() {
     replace(this.#pointEditComponent, this.#pointComponent);
