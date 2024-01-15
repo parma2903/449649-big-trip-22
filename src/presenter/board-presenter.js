@@ -4,11 +4,14 @@ import EventListView from '../view/event-list-view.js';
 import SortingView from '../view/sorting-view.js';
 import TripView from '../view/trip-view.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils/utils.js';
+import { updateItem, sortTime, sortPrice } from '../utils/utils.js';
+import { SortType } from '../const.js';
 
 export default class BoardPresenter {
   #tripContainer = null;
   #pointsModel = null;
+  #offers = [];
+  #destinations = [];
 
   #tripViewComponent = new TripView();
   #pointListViewComponent = new EventListView();
@@ -17,6 +20,8 @@ export default class BoardPresenter {
 
   #boardPoints = [];
   #pointPresenters = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedBoardPoints = [];
 
   constructor({ tripContainer, pointsModel }) {
     this.#tripContainer = tripContainer;
@@ -25,11 +30,32 @@ export default class BoardPresenter {
 
   init() {
     this.#boardPoints = [...this.#pointsModel.points];
+    this.#sourcedBoardPoints = [...this.#pointsModel.points];
     this.#renderBoard();
   }
 
-  #handleSortTypeChange = (sortType) => {
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#boardPoints.sort(sortTime);
+        break;
+      case SortType.PRICE:
+        this.#boardPoints.sort(sortPrice);
+        break;
+      default:
+        this.#boardPoints = [...this.#sourcedBoardPoints];
+    }
 
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#renderPointsList();
   };
 
   #handleModeChange = () => {
@@ -38,6 +64,7 @@ export default class BoardPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
@@ -45,6 +72,7 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#tripViewComponent,
       onDataChange: this.#handlePointChange,
+      onClickFavouriteButtton: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
     pointPresenter.init(point);

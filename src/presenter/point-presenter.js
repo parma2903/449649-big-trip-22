@@ -8,6 +8,9 @@ const Mode = {
 };
 
 export default class PointPresenter {
+  #offers = null;
+  #destinations = null;
+  #onClickFavouriteButton = null;
   #pointListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
@@ -16,8 +19,11 @@ export default class PointPresenter {
   #handleModeChange = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer, onDataChange, onModeChange}) {
+  constructor({offers, destinations, pointListContainer, onClickFavouriteButton, onDataChange, onModeChange}) {
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#pointListContainer = pointListContainer;
+    this.#onClickFavouriteButton = onClickFavouriteButton;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
@@ -29,19 +35,25 @@ export default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView({
-      point,
+      point: this.#point,
+      offers: this.#offers,
+      destination: this.#destinations,
       onEditClick: () => {
         this.#replacePointToEdit();
         document.addEventListener('keydown', this.#escKeyDownHandler);
-      }
+      },
+      onClickFavouriteButton: this.#handleFavouriteClick
     });
 
     this.#pointEditComponent = new PointEditView({
-      point,
+      point: point,
+      offers: this.#offers,
+      destinations: this.#destinations,
+      onSubmit: this.#handleSaveClick,
       onCloseClick: () => {
         this.#replacePointToView();
         document.removeEventListener('keydown', this.#escKeyDownHandler);
-      }
+      },
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {

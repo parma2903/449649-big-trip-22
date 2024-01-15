@@ -10,4 +10,19 @@ const getRandomPositiveNumber = (min = 0, max = 1) => {
 };
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-export { formatDate, formatTime, getTimeDiff, getRandomPositiveNumber, updateItem };
+function sortTime(eventA, eventB) {
+  const eventADuration = getEventDuration(eventA);
+  const eventBDuration = getEventDuration(eventB);
+
+  return eventBDuration - eventADuration;
+}
+
+function getEventDuration(event) {
+  return dayjs(event.dateTo).diff(dayjs(event.dateFrom));
+}
+
+function sortPrice(eventB, eventA) {
+  return eventA.basePrice - eventB.basePrice;
+}
+
+export { formatDate, formatTime, getTimeDiff, getRandomPositiveNumber, updateItem, sortTime, sortPrice };
