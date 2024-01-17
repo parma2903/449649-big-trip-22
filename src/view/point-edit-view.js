@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
 
 const BLANK_POINT = {
@@ -153,7 +153,7 @@ export const createEditViewTemplate = (point = {}) => {
   );
 };
 
-export default class EditView extends AbstractView {
+export default class EditView extends AbstractStatefulView {
   #point = null;
   #handleCloseClick = null;
 
