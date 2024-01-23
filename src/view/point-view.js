@@ -23,7 +23,7 @@ const createFavoriteIcon = (isFavorite = false) => (
 );
 
 const createPointViewTemplate = (point) => {
-  const { dateFrom, dateTo, destination } = point;
+  const { basePrice, dateFrom, dateTo, destination, isFavorite } = point;
   const month = formatDate(dateFrom, 'MMM DD');
   const startTime = formatTime(dateFrom);
   const endTime = formatTime(dateTo);
@@ -46,13 +46,13 @@ const createPointViewTemplate = (point) => {
           <p class="event__duration">${diff}M</p>
         </div>
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${point.basePrice}</span>
+          &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
           ${createOffer(point)}
         </ul>
-        ${createFavoriteIcon(point.isFavorite)}
+        ${createFavoriteIcon(isFavorite)}
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -62,31 +62,30 @@ const createPointViewTemplate = (point) => {
 };
 
 export default class PointView extends AbstractView {
-  #point = null;
+  #point = [];
   #offers = [];
-  #destination = null;
+  #destinations = [];
   #handleEditClick = null;
-  #onClickFavouriteButton = null;
+  #handleFavoriteClick = null;
 
-  constructor({ point, offers, destination, onEditClick, onClickFavouriteButton }) {
+  constructor({ point, offers, destinations, onEditClick, onFavoriteClick }) {
     super();
     this.#point = point;
     this.#offers = offers;
-    this.destination = destination;
+    this.#destinations = destinations;
     this.#handleEditClick = onEditClick;
-    this.#onClickFavouriteButton = onClickFavouriteButton;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#onClickFavouriteButtonHandler);
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
-  #editClickHandler = (evt) => {
-    evt.preventDefault();
+  #editClickHandler = () => {
     this.#handleEditClick();
   };
 
-  #onClickFavouriteButtonHandler = () => {
-    this.#onClickFavouriteButton();
+  #favoriteClickHandler = () => {
+    this.#handleFavoriteClick();
   };
 
   get template() {

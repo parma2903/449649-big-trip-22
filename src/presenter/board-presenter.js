@@ -72,7 +72,6 @@ export default class BoardPresenter {
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#tripViewComponent,
       onDataChange: this.#handlePointChange,
-      onClickFavouriteButtton: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
     pointPresenter.init(point);

@@ -8,28 +8,26 @@ const Mode = {
 };
 
 export default class PointPresenter {
-  #offers = null;
-  #destinations = null;
-  #onClickFavouriteButton = null;
+  #point = [];
+  #offers = [];
+  #destinations = [];
   #pointListContainer = null;
   #pointComponent = null;
   #pointEditComponent = null;
-  #point = null;
   #handleDataChange = null;
   #handleModeChange = null;
   #mode = Mode.DEFAULT;
 
-  constructor({offers, destinations, pointListContainer, onClickFavouriteButton, onDataChange, onModeChange}) {
-    this.#offers = offers;
-    this.#destinations = destinations;
+  constructor({pointListContainer, onDataChange, onModeChange}) {
     this.#pointListContainer = pointListContainer;
-    this.#onClickFavouriteButton = onClickFavouriteButton;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
-  init(point) {
+  init(point, offers, destinations) {
     this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
@@ -42,11 +40,11 @@ export default class PointPresenter {
         this.#replacePointToEdit();
         document.addEventListener('keydown', this.#escKeyDownHandler);
       },
-      onClickFavouriteButton: this.#handleFavouriteClick
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#pointEditComponent = new PointEditView({
-      point: point,
+      point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
       onSubmit: this.#handleSaveClick,
@@ -116,7 +114,7 @@ export default class PointPresenter {
     this.#replacePointToView();
   };
 
-  #handleFavouriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavourite: !this.#point.isFavourite});
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }
