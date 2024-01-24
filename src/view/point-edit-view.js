@@ -156,13 +156,19 @@ export const createEditViewTemplate = (point = {}) => {
 export default class EditView extends AbstractStatefulView {
   #point = null;
   #handleCloseClick = null;
+  #handleSaveClick = null;
+  #handleDeleteClick = null;
 
-  constructor({ point = BLANK_POINT, onCloseClick }) {
+  constructor({ point = BLANK_POINT, onCloseClick, onSaveClick, onDeleteClick }) {
     super();
     this.#point = point;
     this.#handleCloseClick = onCloseClick;
+    this.#handleSaveClick = onSaveClick;
+    this.#handleDeleteClick = onDeleteClick;
 
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
+    this.element.querySelector('.event__save-btn').addEventListener('click', this.#saveClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
   }
 
   get template() {
@@ -172,5 +178,15 @@ export default class EditView extends AbstractStatefulView {
   #closeClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleCloseClick();
+  };
+
+  #saveClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSaveClick(this.#point);
+  };
+
+  #deleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick();
   };
 }

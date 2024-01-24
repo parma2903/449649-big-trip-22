@@ -36,10 +36,7 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destination: this.#destinations,
-      onEditClick: () => {
-        this.#replacePointToEdit();
-        document.addEventListener('keydown', this.#escKeyDownHandler);
-      },
+      onEditClick: this.#handleEditClick,
       onFavoriteClick: this.#handleFavoriteClick
     });
 
@@ -47,11 +44,9 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
-      onSubmit: this.#handleSaveClick,
-      onCloseClick: () => {
-        this.#replacePointToView();
-        document.removeEventListener('keydown', this.#escKeyDownHandler);
-      },
+      onSaveClick: this.#handleSaveClick,
+      onDeleteClick: this.#handleDeleteClick,
+      onCloseClick: this.#handleCloseClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -103,6 +98,7 @@ export default class PointPresenter {
 
   #handleEditClick = () => {
     this.#replacePointToEdit();
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleSaveClick = (point) => {
@@ -111,7 +107,12 @@ export default class PointPresenter {
   };
 
   #handleDeleteClick = () => {
+    //необходимо написать функцию удаления поинта
+  };
+
+  #handleCloseClick = () => {
     this.#replacePointToView();
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFavoriteClick = () => {
