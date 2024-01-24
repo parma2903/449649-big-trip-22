@@ -54,11 +54,12 @@ const createOfferName = (offer = {}) => {
 
 const createOfferSelector = (point = {}) => {
   const { offers } = point;
+  const pointId = point.id;
 
   return offers.map((offer) =>
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${createOfferName(offer)}-1" type="checkbox" name="event-offer-${createOfferName(offer)}" checked>
-      <label class="event__offer-label" for="event-offer-${createOfferName(offer)}-1">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${createOfferName(offer)}-${pointId}" type="checkbox" name="event-offer-${createOfferName(offer)}" checked>
+      <label class="event__offer-label" for="event-offer-${createOfferName(offer)}-${pointId}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
@@ -76,18 +77,22 @@ const createOffersSection = (point) => (
   </section>`
 );
 
-const createPointTypeItem = (eventTypes) => {
+const createPointTypeItem = (pointId, eventTypes) => {
   const types = Object.values(eventTypes);
 
   return types.map((type) =>
     `<div class="event__type-item">
-      <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-        <label class="event__type-label  event__type-label--${type}" for="event-type-taxi-1">${type[0].toUpperCase() + type.substring(1)}</label>
+      <input id="event-type-${type}-${pointId}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <label class="event__type-label  event__type-label--${type}" for="event-${type}-${pointId}">${type[0].toUpperCase() + type.substring(1)}</label>
     </div>`).join('');
 };
 
-export const createEditViewTemplate = (point = {}) => {
-  const { type, dateFrom, dateTo, basePrice, destination, offers } = point;
+const createPointDestinationsTemplate = (destinations) => destinations.map((destination) => `<option value="${destination.name}"></option>`).join('');
+
+export const createEditViewTemplate = (point, offers, destinations) => {
+  const { type, dateFrom, dateTo, basePrice } = point;
+  const {description, name, pictures} = point.destination || {};
+  const pointId = point.id || 0;
 
   return (
     `<li class="trip-events__item">
@@ -103,20 +108,18 @@ export const createEditViewTemplate = (point = {}) => {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${createPointTypeItem(POINT_TYPES)}
+                ${createPointTypeItem(pointId, POINT_TYPES)}
               </fieldset>
             </div>
           </div>
 
           <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-1">
-              ${type}
-            </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
-            <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+            <label class="event__label  event__type-output" for="event-destination-${pointId}">${type}</label>
+            <input class="event__input  event__input--destination" id="event-destination-${pointId}" type="text" name="event-destination" value="${name || ''}" list="destination-list-${pointId}">
+
+            <!-- Список пунктов назначения -->
+            <datalist id="destination-list-${pointId}">
+              ${createPointDestinationsTemplate(destinations)}
             </datalist>
           </div>
 
@@ -145,7 +148,12 @@ export const createEditViewTemplate = (point = {}) => {
         <section class="event__details">
             ${offers.length > 0 ? createOffersSection(point) : ''}
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${destination.description}</p>
+            <p class="event__destination-description">${description}</p>
+            <div class="event__photos-container">
+              <div class="event__photos-tape">
+                ${pictures.map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`)).join('')}
+              </div>
+            </div>
           </section>
         </section>
       </form>
@@ -155,13 +163,15 @@ export const createEditViewTemplate = (point = {}) => {
 
 export default class EditView extends AbstractStatefulView {
   #point = null;
+  #offers = [];
+  #destinations = [];
   #handleCloseClick = null;
   #handleSaveClick = null;
   #handleDeleteClick = null;
 
   constructor({ point = BLANK_POINT, onCloseClick, onSaveClick, onDeleteClick }) {
     super();
-    this.#point = point;
+    this._setState(EditView.parsePointToState(point));
     this.#handleCloseClick = onCloseClick;
     this.#handleSaveClick = onSaveClick;
     this.#handleDeleteClick = onDeleteClick;
@@ -171,8 +181,12 @@ export default class EditView extends AbstractStatefulView {
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
   }
 
+  static parsePointToState(point) {
+    return {...point};
+  }
+
   get template() {
-    return createEditViewTemplate(this.#point);
+    return createEditViewTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #closeClickHandler = (evt) => {
@@ -182,7 +196,7 @@ export default class EditView extends AbstractStatefulView {
 
   #saveClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSaveClick(this.#point);
+    this.#handleSaveClick(this._state);
   };
 
   #deleteClickHandler = (evt) => {
