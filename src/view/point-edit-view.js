@@ -171,6 +171,7 @@ export default class EditView extends AbstractStatefulView {
 
   constructor({ point = BLANK_POINT, onCloseClick, onSaveClick, onDeleteClick }) {
     super();
+    this.#point;
     this._setState(EditView.parsePointToState(point));
     this.#handleCloseClick = onCloseClick;
     this.#handleSaveClick = onSaveClick;
@@ -185,6 +186,11 @@ export default class EditView extends AbstractStatefulView {
     return {...point};
   }
 
+  static parseStateToPoint(state) {
+    const task = {...state};
+    return task;
+  }
+
   get template() {
     return createEditViewTemplate(this._state, this.#offers, this.#destinations);
   }
@@ -196,7 +202,7 @@ export default class EditView extends AbstractStatefulView {
 
   #saveClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSaveClick(this._state);
+    this.#handleSaveClick(EditView.parseStateToPoint(this._state));
   };
 
   #deleteClickHandler = (evt) => {
