@@ -162,7 +162,6 @@ export const createEditViewTemplate = (point, offers, destinations) => {
 };
 
 export default class EditView extends AbstractStatefulView {
-  #point = null;
   #offers = [];
   #destinations = [];
   #handleCloseClick = null;
@@ -171,7 +170,6 @@ export default class EditView extends AbstractStatefulView {
 
   constructor({ point = BLANK_POINT, onCloseClick, onSaveClick, onDeleteClick }) {
     super();
-    this.#point;
     this._setState(EditView.parsePointToState(point));
     this.#handleCloseClick = onCloseClick;
     this.#handleSaveClick = onSaveClick;
