@@ -1,6 +1,7 @@
 import {render, replace, remove } from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
+import EditView from '../view/point-edit-view.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -73,6 +74,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replacePointToView();
     }
   }
@@ -106,11 +108,10 @@ export default class PointPresenter {
     this.#replacePointToView();
   };
 
-  #handleDeleteClick = () => {
-    //необходимо написать функцию удаления поинта
-  };
+  #handleDeleteClick = () => {};
 
   #handleCloseClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replacePointToView();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   };

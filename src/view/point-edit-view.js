@@ -1,5 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import dayjs from 'dayjs';
+import flatpickr from 'flatpickr';
+import { DATE_CONFIG } from '../utils/utils.js';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const BLANK_POINT = {
   type: '',
@@ -162,6 +165,8 @@ export const createEditViewTemplate = (point, offers, destinations) => {
 };
 
 export default class EditView extends AbstractStatefulView {
+  #dateFromPicker = null;
+  #dateToPicker = null;
   #offers = [];
   #destinations = [];
   #handleCloseClick = null;
@@ -175,10 +180,79 @@ export default class EditView extends AbstractStatefulView {
     this.#handleSaveClick = onSaveClick;
     this.#handleDeleteClick = onDeleteClick;
 
+    this._restoreHandlers();
+  }
+
+  get template() {
+    return createEditViewTemplate(this._state, this.#offers, this.#destinations);
+  }
+
+  reset(point) {
+    this.updateElement(EditView.parsePointToState(point));
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#dateFromPicker) {
+      this.#dateFromPicker.destroy();
+      this.#dateFromPicker = null;
+    }
+
+    if (this.#dateToPicker) {
+      this.#dateToPicker.destroy();
+      this.#dateToPicker = null;
+    }
+  };
+
+  _restoreHandlers() {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#closeClickHandler);
     this.element.querySelector('.event__save-btn').addEventListener('click', this.#saveClickHandler);
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteClickHandler);
+    this.element.querySelector('.event__reset-btn').addEventListener('reset', this.#deleteClickHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationInputHandler);
+    //this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#priceInputHandler);
+
+    this.#setDatepicker();
   }
+
+  #setDatepicker = () => {
+    const [dateFromElement, dateToElement] = this.element.querySelectorAll('.event__input--time');
+    this.#dateFromPicker = flatpickr(
+      dateFromElement,
+      {
+        ...DATE_CONFIG,
+        maxDate: this._state.dateTo,
+        onChange: this.#changeDateFromHandler,
+        defaultDate: this._state.dateFrom || '',
+      }
+    );
+
+    this.#dateToPicker = flatpickr(
+      dateToElement,
+      {
+        ...DATE_CONFIG,
+        minDate: this._state.dateFrom,
+        onChange: this.#changeDateToHandler,
+        defaultDate: this._state.dateFrom || '',
+      }
+    );
+  };
+
+  #changeDateFromHandler = ([date]) => {
+    this._setState({
+      dateFrom: date.toISOString(),
+    });
+    this.#dateToPicker.set('minDate', this._state.dateFrom);
+  };
+
+  #changeDateToHandler = ([date]) => {
+    this._setState({
+      dateTo: date.toISOString(),
+    });
+    this.#dateFromPicker.set('maxDate', this._state.dateTo);
+  };
 
   static parsePointToState(point) {
     return {...point};
@@ -187,10 +261,6 @@ export default class EditView extends AbstractStatefulView {
   static parseStateToPoint(state) {
     const task = {...state};
     return task;
-  }
-
-  get template() {
-    return createEditViewTemplate(this._state, this.#offers, this.#destinations);
   }
 
   #closeClickHandler = (evt) => {
@@ -206,5 +276,33 @@ export default class EditView extends AbstractStatefulView {
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleDeleteClick();
+  };
+
+  #typeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({type: evt.target.value})
+  };
+
+  #destinationInputHandler = (evt) => {
+    evt.preventDefault();
+    const newDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
+    if (newDestination) {
+      this._setState({ destination: newDestination.id });
+    }
+    evt.target.value = '';
+  };
+
+  #offerChangeHandler = (evt) => {
+    const selectedOffers = this.element.querySelectorAll('.event__offer-checkbox:checked');
+
+    this._setState({
+      offers: Array.from(selectedOffers).map((item) => item.dataset.offerId)
+    })
+  }
+
+  #priceInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({ basePrice: parseInt(evt.target.value, 10)
+    });
   };
 }

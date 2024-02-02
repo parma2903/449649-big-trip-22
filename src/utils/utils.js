@@ -25,4 +25,22 @@ function sortPrice(eventB, eventA) {
   return eventA.basePrice - eventB.basePrice;
 }
 
-export { formatDate, formatTime, getTimeDiff, getRandomPositiveNumber, updateItem, sortTime, sortPrice };
+const DateFormat = {
+  DATE_PICKER: 'd/m/y H:i',
+  DAY_MONTH: 'D MMM',
+  MONTH_DAY: 'MMM DD',
+  HOUR_MINUTES: 'HH:mm',
+  DAY_MONTH_YEAR: 'DD/MM/YY[&nbsp;]HH:mm',
+  MINUTES_WITH_POSTFIX: 'mm[M]',
+  HOUR_MINUTES_WITH_POSTFIX: 'HH[H] mm[M]',
+};
+
+const DATE_CONFIG = {
+  dateFormat: DateFormat.DATE_PICKER,
+  enableTime: true,
+  'time_24hr': true,
+  locale: { firstDayOfWeek: 1 },
+  allowInput: true
+};
+
+export { formatDate, formatTime, getTimeDiff, getRandomPositiveNumber, updateItem, sortTime, sortPrice, DATE_CONFIG };
